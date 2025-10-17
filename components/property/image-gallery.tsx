@@ -34,7 +34,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   return (
     <>
       <div className="grid gap-2 md:grid-cols-4 md:grid-rows-2">
-        <div className="relative col-span-2 row-span-2 aspect-square overflow-hidden rounded-l-lg md:aspect-auto">
+        <div className="relative col-span-2 row-span-2 aspect-square overflow-hidden rounded-l-lg md:aspect-[16/12]">
           <Image
             src={images[0] || "/placeholder.svg"}
             alt={`${title} - Main`}
