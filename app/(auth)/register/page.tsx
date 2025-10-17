@@ -16,13 +16,15 @@ import { useToast } from "@/hooks/use-toast";
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+    email: z.string().email("Por favor ingresa un correo válido"),
+    password: z
+      .string()
+      .min(8, "La contraseña debe tener al menos 8 caracteres"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
 
@@ -60,12 +62,12 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.message || "Registration failed");
+        throw new Error(error.message || "Registro fallido");
       }
 
       toast({
-        title: "Account created",
-        description: "Please sign in with your new account.",
+        title: "Cuenta creada",
+        description: "Por favor inicia sesión con tu nueva cuenta.",
       });
 
       router.push("/login");
@@ -73,9 +75,11 @@ export default function RegisterPage() {
       console.error("[v0] Registration error:", error);
       toast({
         variant: "destructive",
-        title: "Registration failed",
+        title: "Registro fallido",
         description:
-          error instanceof Error ? error.message : "Please try again later.",
+          error instanceof Error
+            ? error.message
+            : "Por favor, intenta más tarde.",
       });
     } finally {
       setIsLoading(false);
@@ -85,20 +89,20 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <AuthCard
-        title="Create an account"
-        description="Get started with your rental journey"
+        title="Crea una cuenta"
+        description="Comienza tu experiencia de alquiler"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormInput
-            label="Full name"
+            label="Nombre completo"
             type="text"
-            placeholder="John Doe"
+            placeholder="Juan Pérez"
             error={errors.name?.message}
             {...register("name")}
           />
 
           <FormInput
-            label="Email"
+            label="Correo"
             type="email"
             placeholder="you@example.com"
             error={errors.email?.message}
@@ -106,21 +110,21 @@ export default function RegisterPage() {
           />
 
           <PasswordInput
-            label="Password"
-            placeholder="Create a password"
+            label="Contraseña"
+            placeholder="Crea una contraseña"
             error={errors.password?.message}
             {...register("password")}
           />
 
           <PasswordInput
-            label="Confirm password"
-            placeholder="Confirm your password"
+            label="Confirmar contraseña"
+            placeholder="Confirma tu contraseña"
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Create account"}
+            {isLoading ? "Creando cuenta..." : "Crear cuenta"}
           </Button>
         </form>
 
@@ -129,9 +133,9 @@ export default function RegisterPage() {
         <OAuthButtons />
 
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <Link href="/login" className="text-primary hover:underline">
-            Sign in
+            Inicia sesión
           </Link>
         </p>
       </AuthCard>

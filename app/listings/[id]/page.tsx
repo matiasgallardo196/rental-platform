@@ -48,22 +48,22 @@ export default async function PropertyDetailPage({
         <div className="mt-8 grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="space-y-8">
-              {/* Host Info */}
+              {/* Información del anfitrión */}
               <div>
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-xl font-semibold">
-                      Hosted by {property.host.name}
+                      Anfitrión: {property.host.name}
                     </h2>
                     <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                       <Users className="h-4 w-4" />
-                      <span>{property.capacity.guests} guests</span>
+                      <span>{property.capacity.guests} huéspedes</span>
                       <span>·</span>
                       <Bed className="h-4 w-4" />
-                      <span>{property.capacity.bedrooms} bedrooms</span>
+                      <span>{property.capacity.bedrooms} dormitorios</span>
                       <span>·</span>
                       <Bath className="h-4 w-4" />
-                      <span>{property.capacity.bathrooms} bathrooms</span>
+                      <span>{property.capacity.bathrooms} baños</span>
                     </div>
                   </div>
                   <Avatar className="h-16 w-16">
@@ -78,9 +78,11 @@ export default async function PropertyDetailPage({
 
               <Separator />
 
-              {/* Description */}
+              {/* Descripción */}
               <div>
-                <h2 className="mb-4 text-xl font-semibold">About this place</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  Acerca de este lugar
+                </h2>
                 <p className="leading-relaxed text-muted-foreground">
                   {property.description}
                 </p>
@@ -88,19 +90,19 @@ export default async function PropertyDetailPage({
 
               <Separator />
 
-              {/* Amenities */}
+              {/* Comodidades */}
               <div>
                 <h2 className="mb-4 text-xl font-semibold">
-                  What this place offers
+                  Qué ofrece este lugar
                 </h2>
                 <AmenitiesList amenities={property.amenities} showAll />
               </div>
 
               <Separator />
 
-              {/* Location */}
+              {/* Ubicación */}
               <div>
-                <h2 className="mb-4 text-xl font-semibold">Where you'll be</h2>
+                <h2 className="mb-4 text-xl font-semibold">Dónde estarás</h2>
                 <div className="aspect-video overflow-hidden rounded-lg bg-muted">
                   <div className="flex h-full items-center justify-center text-muted-foreground">
                     <div className="text-center">
@@ -108,7 +110,9 @@ export default async function PropertyDetailPage({
                       <p>
                         {property.location.city}, {property.location.state}
                       </p>
-                      <p className="text-sm">Map integration coming soon</p>
+                      <p className="text-sm">
+                        La integración del mapa estará disponible pronto
+                      </p>
                     </div>
                   </div>
                 </div>

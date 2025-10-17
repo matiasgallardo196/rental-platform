@@ -60,12 +60,12 @@ export default function ProfilePage() {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to update profile");
+        throw new Error("No se pudo actualizar el perfil");
       }
 
       toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
+        title: "Perfil actualizado",
+        description: "Tu perfil se actualizó correctamente.",
       });
 
       router.refresh();
@@ -73,8 +73,8 @@ export default function ProfilePage() {
       console.error("[v0] Profile update error:", error);
       toast({
         variant: "destructive",
-        title: "Update failed",
-        description: "Please try again later.",
+        title: "Error al actualizar",
+        description: "Por favor, intenta más tarde.",
       });
     } finally {
       setIsLoading(false);
@@ -85,9 +85,9 @@ export default function ProfilePage() {
     <div className="container mx-auto max-w-2xl p-8">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Settings</CardTitle>
+          <CardTitle>Configuración de perfil</CardTitle>
           <CardDescription>
-            Manage your account information and preferences
+            Administra la información de tu cuenta y preferencias
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -101,14 +101,14 @@ export default function ProfilePage() {
             </div>
 
             <FormInput
-              label="Full name"
-              placeholder="John Doe"
+              label="Nombre completo"
+              placeholder="Juan Pérez"
               error={errors.name?.message}
               {...register("name")}
             />
 
             <FormInput
-              label="Email"
+              label="Correo"
               type="email"
               placeholder="you@example.com"
               error={errors.email?.message}
@@ -116,7 +116,7 @@ export default function ProfilePage() {
             />
 
             <FormInput
-              label="Phone number"
+              label="Número de teléfono"
               type="tel"
               placeholder="+1 (555) 000-0000"
               error={errors.phone?.message}
@@ -124,10 +124,10 @@ export default function ProfilePage() {
             />
 
             <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio">Biografía</Label>
               <Textarea
                 id="bio"
-                placeholder="Tell us about yourself..."
+                placeholder="Cuéntanos sobre ti..."
                 rows={4}
                 className={errors.bio && "border-destructive"}
                 {...register("bio")}
@@ -139,14 +139,14 @@ export default function ProfilePage() {
 
             <div className="flex gap-4">
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save changes"}
+                {isLoading ? "Guardando..." : "Guardar cambios"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
               >
-                Cancel
+                Cancelar
               </Button>
             </div>
           </form>

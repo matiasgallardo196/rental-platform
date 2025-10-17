@@ -49,7 +49,7 @@ export default function AdminPropertiesPage() {
   const columns = [
     {
       key: "name",
-      label: "Property",
+      label: "Propiedad",
       render: (property: Property) => (
         <div>
           <p className="font-medium">{property.name}</p>
@@ -59,26 +59,26 @@ export default function AdminPropertiesPage() {
     },
     {
       key: "host",
-      label: "Host",
+      label: "Anfitrión",
     },
     {
       key: "price",
-      label: "Price",
-      render: (property: Property) => `$${property.price}/night`,
+      label: "Precio",
+      render: (property: Property) => `$${property.price}/ noche`,
     },
     {
       key: "bookings",
-      label: "Bookings",
+      label: "Reservas",
     },
     {
       key: "status",
-      label: "Status",
+      label: "Estado",
       render: (property: Property) => (
         <Badge
           variant={property.status === "active" ? "default" : property.status === "paused" ? "secondary" : "outline"}
           className="capitalize"
         >
-          {property.status}
+          {property.status === "active" ? "Activa" : property.status === "paused" ? "Pausada" : "Pendiente"}
         </Badge>
       ),
     },
@@ -97,12 +97,12 @@ export default function AdminPropertiesPage() {
     <div className="container mx-auto min-h-screen p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Properties</h1>
-          <p className="text-muted-foreground">Manage all properties</p>
+          <h1 className="text-3xl font-bold">Propiedades</h1>
+          <p className="text-muted-foreground">Administra todas las propiedades</p>
         </div>
       </div>
 
-      <DataTable data={mockProperties} columns={columns} searchPlaceholder="Search properties..." />
+      <DataTable data={mockProperties} columns={columns} searchPlaceholder="Buscar propiedades..." />
     </div>
   )
 }

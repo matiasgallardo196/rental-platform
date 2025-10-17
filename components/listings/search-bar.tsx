@@ -33,7 +33,7 @@ export function SearchBar() {
           <Search className="h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search properties..."
+            placeholder="Buscar propiedades..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="border-0 p-0 focus-visible:ring-0"
@@ -44,7 +44,7 @@ export function SearchBar() {
           <MapPin className="h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Location"
+            placeholder="Ubicación"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="border-0 p-0 focus-visible:ring-0"
@@ -53,7 +53,7 @@ export function SearchBar() {
 
         <Button type="submit" size="lg" className="md:w-auto">
           <Search className="mr-2 h-4 w-4" />
-          Search
+          Buscar
         </Button>
       </form>
     </Card>

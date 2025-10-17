@@ -23,10 +23,10 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Find unique places to stay around the world
+              Encuentra lugares únicos para quedarte en todo el mundo
             </h1>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-              Explore memorable stays for any occasion.
+              Explora estancias memorables para cualquier ocasión.
             </p>
           </div>
           <div className="mt-6">
@@ -34,7 +34,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-6 flex items-center justify-center gap-3">
             <Link href="/listings">
-              <Button size="lg">Explore stays</Button>
+              <Button size="lg">Explorar estancias</Button>
             </Link>
           </div>
         </div>
@@ -45,16 +45,16 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6 flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-semibold">Featured stays</h2>
+              <h2 className="text-2xl font-semibold">Estancias destacadas</h2>
               <p className="text-sm text-muted-foreground">
-                Popular picks among travelers
+                Favoritas entre los viajeros
               </p>
             </div>
             <Link
               href="/listings"
               className="text-sm font-medium text-primary hover:underline"
             >
-              See all
+              Ver todas
             </Link>
           </div>
           <ListingsGrid properties={properties || []} />

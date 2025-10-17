@@ -31,15 +31,15 @@ export default function HostListingsPage() {
     <div className="container mx-auto p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Your listings</h1>
+          <h1 className="text-3xl font-bold">Tus publicaciones</h1>
           <p className="mt-2 text-muted-foreground">
-            Manage your properties and reservations
+            Administra tus propiedades y reservas
           </p>
         </div>
         <Link href="/host/listings/new">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add listing
+            Agregar publicación
           </Button>
         </Link>
       </div>
@@ -49,12 +49,13 @@ export default function HostListingsPage() {
           <div key={p.id} className="rounded-lg border p-4">
             <div className="font-semibold">{p.title}</div>
             <div className="text-sm text-muted-foreground">{p.location}</div>
-            <div className="mt-2 text-sm">${p.pricing.basePrice} / night</div>
+            <div className="mt-2 text-sm">${p.pricing.basePrice} / noche</div>
           </div>
         ))}
         {items.length === 0 && (
           <p className="text-center text-muted-foreground w-full">
-            No listings yet. Create your first property listing to get started.
+            Aún no tienes publicaciones. Crea tu primera propiedad para
+            comenzar.
           </p>
         )}
       </div>

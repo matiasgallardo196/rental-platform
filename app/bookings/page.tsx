@@ -40,12 +40,12 @@ export default function BookingsPage() {
   return (
     <div className="container mx-auto min-h-screen p-8">
       <div className="mx-auto max-w-6xl">
-        <h1 className="mb-8 text-3xl font-bold">My Bookings</h1>
+        <h1 className="mb-8 text-3xl font-bold">Mis reservas</h1>
 
         <Tabs defaultValue="upcoming" className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-            <TabsTrigger value="past">Past</TabsTrigger>
+            <TabsTrigger value="upcoming">Próximas</TabsTrigger>
+            <TabsTrigger value="past">Pasadas</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upcoming" className="mt-6 space-y-4">
@@ -54,13 +54,13 @@ export default function BookingsPage() {
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
                   <p className="mb-2 text-lg font-medium">
-                    No upcoming bookings
+                    No tienes reservas próximas
                   </p>
                   <p className="mb-4 text-sm text-muted-foreground">
-                    Start planning your next trip
+                    Comienza a planear tu próximo viaje
                   </p>
                   <Button asChild>
-                    <Link href="/listings">Browse properties</Link>
+                    <Link href="/listings">Ver propiedades</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -102,7 +102,7 @@ export default function BookingsPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="text-muted-foreground">
-                                {booking.guests} guests
+                                {booking.guests} huéspedes
                               </span>
                             </div>
                           </div>
@@ -111,7 +111,7 @@ export default function BookingsPage() {
                         <div className="mt-4 flex items-center justify-between border-t pt-4">
                           <div>
                             <p className="text-sm text-muted-foreground">
-                              Total paid
+                              Total pagado
                             </p>
                             <p className="text-xl font-semibold">
                               ${booking.total}
@@ -120,10 +120,10 @@ export default function BookingsPage() {
                           <div className="flex gap-2">
                             <Button variant="outline" size="sm">
                               <MessageSquare className="mr-2 h-4 w-4" />
-                              Message host
+                              Mensaje al anfitrión
                             </Button>
                             <Button variant="outline" size="sm">
-                              View details
+                              Ver detalles
                             </Button>
                           </div>
                         </div>
@@ -177,7 +177,7 @@ export default function BookingsPage() {
                       <div className="mt-4 flex items-center justify-between border-t pt-4">
                         <div>
                           <p className="text-sm text-muted-foreground">
-                            Total paid
+                            Total pagado
                           </p>
                           <p className="text-xl font-semibold">
                             ${booking.total}
@@ -187,11 +187,11 @@ export default function BookingsPage() {
                           {!booking.hasReview && (
                             <Button size="sm">
                               <Star className="mr-2 h-4 w-4" />
-                              Leave review
+                              Dejar reseña
                             </Button>
                           )}
                           <Button variant="outline" size="sm">
-                            View details
+                            Ver detalles
                           </Button>
                         </div>
                       </div>

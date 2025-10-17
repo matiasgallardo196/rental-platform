@@ -80,29 +80,29 @@ export default function HostBookingsPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/host/listings">Host</BreadcrumbLink>
+              <BreadcrumbLink href="/host/listings">Anfitrión</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Bookings</BreadcrumbPage>
+              <BreadcrumbPage>Reservas</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <h1 className="mb-4 text-3xl font-bold">Your bookings</h1>
+      <h1 className="mb-4 text-3xl font-bold">Tus reservas</h1>
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-5">
         <Input
           type="date"
           value={fromDate}
           onChange={(e) => setFromDate(e.target.value)}
-          placeholder="From date"
+          placeholder="Desde"
         />
         <Input
           type="date"
           value={toDate}
           onChange={(e) => setToDate(e.target.value)}
-          placeholder="To date"
+          placeholder="Hasta"
         />
         <Input
           type="number"
@@ -110,7 +110,7 @@ export default function HostBookingsPage() {
           step={1}
           value={minTotal}
           onChange={(e) => setMinTotal(e.target.value)}
-          placeholder="Min total"
+          placeholder="Mínimo total"
         />
         <Input
           type="number"
@@ -118,17 +118,17 @@ export default function HostBookingsPage() {
           step={1}
           value={maxTotal}
           onChange={(e) => setMaxTotal(e.target.value)}
-          placeholder="Max total"
+          placeholder="Máximo total"
         />
         <Select
           value={propertyId}
           onValueChange={(v) => setPropertyId(v === "all" ? "" : v)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="All properties" />
+            <SelectValue placeholder="Todas las propiedades" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All properties</SelectItem>
+            <SelectItem value="all">Todas las propiedades</SelectItem>
             {properties.map((p) => (
               <SelectItem key={p.id} value={p.id}>
                 {p.title}
@@ -139,15 +139,17 @@ export default function HostBookingsPage() {
       </div>
       <Tabs defaultValue="upcoming">
         <TabsList>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="past">Past</TabsTrigger>
+          <TabsTrigger value="upcoming">Próximas</TabsTrigger>
+          <TabsTrigger value="past">Pasadas</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming" className="mt-4">
           {upcoming.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Calendar className="mb-2 h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">No upcoming bookings</p>
+                <p className="text-muted-foreground">
+                  No hay reservas próximas
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -155,17 +157,17 @@ export default function HostBookingsPage() {
               data={upcoming}
               columns={[
                 { key: "id", label: "ID" },
-                { key: "propertyId", label: "Property" },
-                { key: "checkIn", label: "Check-in" },
-                { key: "checkOut", label: "Check-out" },
-                { key: "guests", label: "Guests" },
+                { key: "propertyId", label: "Propiedad" },
+                { key: "checkIn", label: "Entrada" },
+                { key: "checkOut", label: "Salida" },
+                { key: "guests", label: "Huéspedes" },
                 {
                   key: "total",
                   label: "Total",
                   render: (b: any) => `$${b.total}`,
                 },
               ]}
-              searchPlaceholder="Search bookings..."
+              searchPlaceholder="Buscar reservas..."
               defaultSortKey="checkIn"
               defaultSortDir="asc"
               filterFn={(b: any) => {
@@ -191,7 +193,7 @@ export default function HostBookingsPage() {
           {past.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                No past bookings
+                No hay reservas pasadas
               </CardContent>
             </Card>
           ) : (
@@ -199,17 +201,17 @@ export default function HostBookingsPage() {
               data={past}
               columns={[
                 { key: "id", label: "ID" },
-                { key: "propertyId", label: "Property" },
-                { key: "checkIn", label: "Check-in" },
-                { key: "checkOut", label: "Check-out" },
-                { key: "guests", label: "Guests" },
+                { key: "propertyId", label: "Propiedad" },
+                { key: "checkIn", label: "Entrada" },
+                { key: "checkOut", label: "Salida" },
+                { key: "guests", label: "Huéspedes" },
                 {
                   key: "total",
                   label: "Total",
                   render: (b: any) => `$${b.total}`,
                 },
               ]}
-              searchPlaceholder="Search bookings..."
+              searchPlaceholder="Buscar reservas..."
               defaultSortKey="checkIn"
               defaultSortDir="desc"
               filterFn={(b: any) => {

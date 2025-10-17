@@ -151,17 +151,17 @@ export default function HostMessagesPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/host/listings">Host</BreadcrumbLink>
+              <BreadcrumbLink href="/host/listings">Anfitrión</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Messages</BreadcrumbPage>
+              <BreadcrumbPage>Mensajes</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <h1 className="mb-2 text-3xl font-bold">Messages</h1>
+      <h1 className="mb-2 text-3xl font-bold">Mensajes</h1>
       <div className="mb-4 flex items-center gap-3">
         <div className="max-w-xs">
           <Select
@@ -169,10 +169,10 @@ export default function HostMessagesPage() {
             onValueChange={(v) => setPropertyId(v === "all" ? "" : v)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="All properties" />
+              <SelectValue placeholder="Todas las propiedades" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All properties</SelectItem>
+              <SelectItem value="all">Todas las propiedades</SelectItem>
               {propertyOptions.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.title}
@@ -193,7 +193,7 @@ export default function HostMessagesPage() {
             setSelected(next);
           }}
         >
-          Toggle select visible
+          Alternar selección visible
         </button>
         <button
           className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
@@ -218,7 +218,7 @@ export default function HostMessagesPage() {
             setSelected({});
           }}
         >
-          Mark as read
+          Marcar como leído
         </button>
         <button
           className="rounded-md border px-3 py-2 text-sm disabled:opacity-50"
@@ -245,7 +245,7 @@ export default function HostMessagesPage() {
             setSelected({});
           }}
         >
-          Mark as unread
+          Marcar como no leído
         </button>
       </div>
 
@@ -254,15 +254,15 @@ export default function HostMessagesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Booking</TableHead>
-                <TableHead>Unread</TableHead>
+                <TableHead>Reserva</TableHead>
+                <TableHead>Sin leer</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {conversations.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} className="h-24 text-center">
-                    No messages
+                    Sin mensajes
                   </TableCell>
                 </TableRow>
               ) : (
@@ -316,7 +316,7 @@ export default function HostMessagesPage() {
                           </div>
                           {c.unreadCount ? (
                             <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                              Unread
+                              Sin leer
                             </span>
                           ) : null}
                         </div>
@@ -331,9 +331,9 @@ export default function HostMessagesPage() {
 
         <div className="md:col-span-2 flex flex-col rounded-md border">
           <div className="border-b p-4">
-            <div className="text-sm text-muted-foreground">Booking</div>
+            <div className="text-sm text-muted-foreground">Reserva</div>
             <div className="text-lg font-semibold">
-              {activeConversation?.bookingId || "Select a thread"}
+              {activeConversation?.bookingId || "Selecciona una conversación"}
             </div>
           </div>
           <div
@@ -344,7 +344,7 @@ export default function HostMessagesPage() {
             {activeBookingId && threadMessages.length === 0 && (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  No messages
+                  Sin mensajes
                 </CardContent>
               </Card>
             )}
@@ -364,7 +364,7 @@ export default function HostMessagesPage() {
             ))}
             {typing && activeBookingId && (
               <div className="mr-auto max-w-[80%] rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
-                typing...
+                escribiendo...
               </div>
             )}
           </div>
@@ -399,7 +399,9 @@ export default function HostMessagesPage() {
               <input
                 className="flex-1 rounded-md border px-3 py-2 text-sm outline-none"
                 placeholder={
-                  activeBookingId ? "Write a message" : "Select a conversation"
+                  activeBookingId
+                    ? "Escribe un mensaje"
+                    : "Selecciona una conversación"
                 }
                 disabled={!activeBookingId}
                 value={input}
@@ -410,7 +412,7 @@ export default function HostMessagesPage() {
                 className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
                 disabled={!activeBookingId || !input.trim()}
               >
-                Send
+                Enviar
               </button>
             </form>
           </div>

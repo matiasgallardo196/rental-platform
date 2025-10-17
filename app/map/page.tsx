@@ -45,7 +45,7 @@ export default function MapPage() {
     <div className="flex h-screen flex-col">
       <div className="border-b p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Explore properties</h1>
+          <h1 className="text-2xl font-bold">Explorar propiedades</h1>
           <div className="flex gap-2">
             <Button
               variant={view === "map" ? "default" : "outline"}
@@ -53,7 +53,7 @@ export default function MapPage() {
               onClick={() => setView("map")}
             >
               <Map className="mr-2 h-4 w-4" />
-              Map
+              Mapa
             </Button>
             <Button
               variant={view === "list" ? "default" : "outline"}
@@ -61,7 +61,7 @@ export default function MapPage() {
               onClick={() => setView("list")}
             >
               <List className="mr-2 h-4 w-4" />
-              List
+              Lista
             </Button>
           </div>
         </div>

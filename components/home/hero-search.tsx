@@ -245,7 +245,7 @@ export function HeroSearch() {
         <div className="flex flex-1 items-start gap-1 rounded-full px-3 py-1 md:rounded-none md:rounded-l-full">
           <div className="flex w-full flex-col">
             <div className="text-xs leading-none font-bold text-foreground">
-              Where
+              Lugar
             </div>
             <Input
               value={location}
@@ -354,7 +354,7 @@ export function HeroSearch() {
               <Button variant="ghost" className="rounded-full px-3 h-8">
                 <div className="flex flex-col items-start leading-none">
                   <span className="text-xs leading-none font-bold text-foreground">
-                    Who
+                    Viajeros
                   </span>
                   <span className="text-xs leading-none">
                     {guestsTotal > 0 || infants > 0

@@ -47,29 +47,29 @@ export default function HostOverviewPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/host/listings">Host</BreadcrumbLink>
+              <BreadcrumbLink href="/host/listings">Anfitrión</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Overview</BreadcrumbPage>
+              <BreadcrumbPage>Resumen</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <h1 className="mb-6 text-3xl font-bold">Host overview</h1>
+      <h1 className="mb-6 text-3xl font-bold">Resumen de anfitrión</h1>
 
       {!summary ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Loading...
+            Cargando...
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Properties</CardTitle>
+              <CardTitle>Propiedades</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               {summary.properties}
@@ -77,7 +77,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Bookings</CardTitle>
+              <CardTitle>Reservas</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               {summary.bookings}
@@ -85,7 +85,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Total nights</CardTitle>
+              <CardTitle>Noches totales</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               {summary.totalNights}
@@ -93,7 +93,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Revenue</CardTitle>
+              <CardTitle>Ingresos</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               ${summary.revenue}
@@ -101,7 +101,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Avg rating</CardTitle>
+              <CardTitle>Calificación promedio</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               {summary.averageRating}
@@ -109,7 +109,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Reviews</CardTitle>
+              <CardTitle>Reseñas</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               {summary.reviewCount}
@@ -117,7 +117,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Available</CardTitle>
+              <CardTitle>Disponible</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               ${summary.available}
@@ -125,7 +125,7 @@ export default function HostOverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Pending</CardTitle>
+              <CardTitle>Pendiente</CardTitle>
             </CardHeader>
             <CardContent className="text-2xl font-semibold">
               ${summary.pending}
@@ -136,4 +136,3 @@ export default function HostOverviewPage() {
     </div>
   );
 }
-

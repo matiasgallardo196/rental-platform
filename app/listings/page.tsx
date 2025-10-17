@@ -21,7 +21,7 @@ async function getListings(searchParams: any) {
   const res = await fetch(`${API_URL}/properties?${qs.toString()}`, {
     cache: "no-store",
   });
-  if (!res.ok) throw new Error("Failed to load properties");
+  if (!res.ok) throw new Error("No se pudieron cargar las propiedades");
   return res.json();
 }
 
@@ -37,9 +37,11 @@ export default async function ListingsPage({
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold">Find your perfect stay</h1>
+          <h1 className="mb-2 text-3xl font-bold">
+            Encuentra tu estadía perfecta
+          </h1>
           <p className="text-muted-foreground">
-            Discover unique properties around the world
+            Descubre propiedades únicas alrededor del mundo
           </p>
         </div>
 
@@ -47,13 +49,13 @@ export default async function ListingsPage({
           <SearchBar />
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              {pagination.totalResults} properties available
+              {pagination.totalResults} propiedades disponibles
             </p>
             <FiltersSheet />
           </div>
         </div>
 
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Cargando...</div>}>
           <ListingsGrid properties={properties} />
         </Suspense>
 

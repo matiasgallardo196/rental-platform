@@ -37,10 +37,10 @@ export function Navbar() {
   const isActive = (path: string) => pathname === path;
 
   const navLinks = [
-    { href: "/listings", label: "Explore", icon: Search },
-    { href: "/map", label: "Map", icon: Search },
-    { href: "/bookings", label: "Trips", icon: Calendar },
-    { href: "/messages", label: "Messages", icon: MessageSquare },
+    { href: "/listings", label: "Explorar", icon: Search },
+    { href: "/map", label: "Mapa", icon: Search },
+    { href: "/bookings", label: "Viajes", icon: Calendar },
+    { href: "/messages", label: "Mensajes", icon: MessageSquare },
   ];
 
   const visibleNavLinks = navLinks.filter((link) => {
@@ -52,19 +52,19 @@ export function Navbar() {
   });
 
   const hostLinks = [
-    { href: "/host/overview", label: "Overview", icon: Settings },
-    { href: "/host/listings", label: "My Listings", icon: Building2 },
-    { href: "/host/bookings", label: "Bookings", icon: Calendar },
-    { href: "/host/messages", label: "Messages", icon: MessageSquare },
+    { href: "/host/overview", label: "Resumen", icon: Settings },
+    { href: "/host/listings", label: "Mis Propiedades", icon: Building2 },
+    { href: "/host/bookings", label: "Reservas", icon: Calendar },
+    { href: "/host/messages", label: "Mensajes", icon: MessageSquare },
     { href: "/host/balances", label: "Balances", icon: Settings },
   ];
 
   const adminLinks = [
     { href: "/admin", label: "Admin", icon: Settings },
-    { href: "/admin/analytics", label: "Analytics", icon: Settings },
-    { href: "/admin/properties", label: "Properties", icon: Settings },
-    { href: "/admin/users", label: "Users", icon: Settings },
-    { href: "/admin/pricing", label: "Pricing", icon: Settings },
+    { href: "/admin/analytics", label: "Analíticas", icon: Settings },
+    { href: "/admin/properties", label: "Propiedades", icon: Settings },
+    { href: "/admin/users", label: "Usuarios", icon: Settings },
+    { href: "/admin/pricing", label: "Precios", icon: Settings },
   ];
 
   useEffect(() => {
@@ -156,7 +156,7 @@ export function Navbar() {
               className="hidden md:flex"
               asChild
             >
-              <Link href="/host/listings">Host</Link>
+              <Link href="/host/listings">Anfitrión</Link>
             </Button>
           ) : (
             <Button
@@ -165,7 +165,7 @@ export function Navbar() {
               className="hidden md:flex"
               asChild
             >
-              <Link href="/host/listings">Become a host</Link>
+              <Link href="/host/listings">Conviértete en anfitrión</Link>
             </Button>
           )}
 
@@ -189,14 +189,14 @@ export function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link href="/profile">
                     <User className="mr-2 h-4 w-4" />
-                    Profile
+                    Perfil
                   </Link>
                 </DropdownMenuItem>
                 {(session.user as any)?.role === "guest" && (
                   <DropdownMenuItem asChild>
                     <Link href="/bookings">
                       <Calendar className="mr-2 h-4 w-4" />
-                      My Trips
+                      Mis viajes
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -227,17 +227,17 @@ export function Navbar() {
                   ))}
                 <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Log out
+                  Cerrar sesión
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">Log in</Link>
+                <Link href="/login">Iniciar sesión</Link>
               </Button>
               <Button variant="default" size="sm" asChild>
-                <Link href="/register">Register</Link>
+                <Link href="/register">Registrarse</Link>
               </Button>
             </div>
           )}

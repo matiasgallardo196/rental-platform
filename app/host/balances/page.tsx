@@ -52,26 +52,26 @@ export default function HostBalancesPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/host/listings">Host</BreadcrumbLink>
+              <BreadcrumbLink href="/host/listings">Anfitrión</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Balances</BreadcrumbPage>
+              <BreadcrumbPage>Saldos</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <h1 className="mb-4 text-3xl font-bold">Your balance</h1>
+      <h1 className="mb-4 text-3xl font-bold">Tu saldo</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Overview</CardTitle>
+          <CardTitle>Resumen</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-2 text-sm">
-          <div>Available: ${balance?.available ?? 0}</div>
-          <div>Pending: ${balance?.pending ?? 0}</div>
+          <div>Disponible: ${balance?.available ?? 0}</div>
+          <div>Pendiente: ${balance?.pending ?? 0}</div>
           {balance?.lastPayoutAt && (
-            <div>Last payout: {balance.lastPayoutAt}</div>
+            <div>Último pago: {balance.lastPayoutAt}</div>
           )}
         </CardContent>
       </Card>
@@ -80,16 +80,16 @@ export default function HostBalancesPage() {
         <div className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Recent activity</CardTitle>
+              <CardTitle>Actividad reciente</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Fecha</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead className="text-right">Monto</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

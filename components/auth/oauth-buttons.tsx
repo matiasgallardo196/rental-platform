@@ -1,21 +1,23 @@
-"use client"
+"use client";
 
-import { signIn } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Chrome, Apple } from "lucide-react"
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Chrome, Apple } from "lucide-react";
 
 interface OAuthButtonsProps {
-  callbackUrl?: string
+  callbackUrl?: string;
 }
 
-export function OAuthButtons({ callbackUrl = "/dashboard" }: OAuthButtonsProps) {
+export function OAuthButtons({
+  callbackUrl = "/dashboard",
+}: OAuthButtonsProps) {
   const handleOAuthSignIn = async (provider: "google" | "apple") => {
     try {
-      await signIn(provider, { callbackUrl })
+      await signIn(provider, { callbackUrl });
     } catch (error) {
-      console.error("[v0] OAuth sign in error:", error)
+      console.error("[v0] OAuth sign in error:", error);
     }
-  }
+  };
 
   return (
     <div className="space-y-3">
@@ -26,7 +28,7 @@ export function OAuthButtons({ callbackUrl = "/dashboard" }: OAuthButtonsProps) 
         onClick={() => handleOAuthSignIn("google")}
       >
         <Chrome className="mr-2 h-4 w-4" />
-        Continue with Google
+        Continuar con Google
       </Button>
       <Button
         type="button"
@@ -35,8 +37,8 @@ export function OAuthButtons({ callbackUrl = "/dashboard" }: OAuthButtonsProps) 
         onClick={() => handleOAuthSignIn("apple")}
       >
         <Apple className="mr-2 h-4 w-4" />
-        Continue with Apple
+        Continuar con Apple
       </Button>
     </div>
-  )
+  );
 }
