@@ -2,20 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function HostListingsPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [items, setItems] = useState<any[]>([]);
 
   useEffect(() => {
     const load = async () => {
-      if (!session?.user || (session.user as any).role !== "host") return;
-      const hostId = (session.user as any).id;
+      if (!session?.user || session.user.user_metadata?.role !== "host") return;
+      const hostId = session.user.id;
       const res = await fetch(`${API_URL}/hosts/${hostId}/properties`, {
         cache: "no-store",
       });

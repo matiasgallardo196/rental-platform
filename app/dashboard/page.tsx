@@ -1,11 +1,15 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { cookies } from "next/headers";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const cookieStore = await cookies();
+  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     redirect("/login");
   }
 
@@ -13,7 +17,7 @@ export default async function DashboardPage() {
     <div className="container mx-auto p-8">
       <h1 className="text-3xl font-bold">Panel</h1>
       <p className="mt-4 text-muted-foreground">
-        ¡Bienvenido de nuevo, {session.user?.name || session.user?.email}!
+        ¡Bienvenido de nuevo, {user.user_metadata?.name || user.email}!
       </p>
     </div>
   );

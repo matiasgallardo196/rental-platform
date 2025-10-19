@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Breadcrumb,
@@ -15,13 +15,13 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function HostOverviewPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [summary, setSummary] = useState<any | null>(null);
 
   useEffect(() => {
     const load = async () => {
-      if (!session?.user || (session.user as any).role !== "host") return;
-      const hostId = (session.user as any).id;
+      if (!session?.user || session.user.user_metadata?.role !== "host") return;
+      const hostId = session.user.id;
       const res = await fetch(`${API_URL}/hosts/${hostId}/overview`, {
         cache: "no-store",
       });
@@ -33,7 +33,7 @@ export default function HostOverviewPage() {
     load();
   }, [session]);
 
-  if (!session?.user || (session.user as any).role !== "host") {
+  if (!session?.user || session.user.user_metadata?.role !== "host") {
     return (
       <div className="container mx-auto p-8">
         <p className="text-muted-foreground">Not authorized</p>

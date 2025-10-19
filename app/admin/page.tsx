@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import { Building2, Calendar, TrendingUp, Users, Mail } from "lucide-react";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminDashboard() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [overview, setOverview] = useState<any>(null);
   const [msgs, setMsgs] = useState<any[]>([]);
 
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     load();
   }, [session]);
 
-  if (!session?.user || (session.user as any).role !== "admin") {
+  if (!session?.user || session.user.user_metadata?.role !== "admin") {
     return (
       <div className="container mx-auto min-h-screen p-8">
         <p className="text-muted-foreground">Not authorized</p>

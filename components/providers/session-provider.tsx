@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { useMemo } from "react";
+import type React from "react";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { createSupabaseBrowser } from "@/lib/supabase-browser";
 
-import { SessionProvider } from "next-auth/react"
-import type { Session } from "next-auth"
-
-export function Providers({
-  children,
-  session,
-}: {
-  children: React.ReactNode
-  session: Session | null
-}) {
-  return <SessionProvider session={session}>{children}</SessionProvider>
+export function Providers({ children }: { children: React.ReactNode }) {
+  const supabase = useMemo(() => createSupabaseBrowser(), []);
+  return (
+    <SessionContextProvider supabaseClient={supabase}>
+      {children}
+    </SessionContextProvider>
+  );
 }

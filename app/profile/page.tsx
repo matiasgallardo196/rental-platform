@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -22,7 +22,7 @@ import { profileSchema, type ProfileFormData } from "@/lib/validations/profile";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const session = useSession();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,9 +35,9 @@ export default function ProfilePage() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: session?.user?.name || "",
+      name: session?.user?.user_metadata?.name || "",
       email: session?.user?.email || "",
-      avatar: session?.user?.image || "",
+      avatar: (session?.user as any)?.image || "",
       bio: "",
       phone: "",
     },

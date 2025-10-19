@@ -10,6 +10,7 @@ import { FormInput } from "@/components/auth/form-input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
+import { createSupabaseBrowser } from "@/lib/supabase-browser";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Por favor ingresa un correo válido"),
@@ -34,18 +35,17 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: data.email }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("No se pudo enviar el correo de restablecimiento");
-      }
+      const supabase = createSupabaseBrowser();
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: origin
+          ? `${origin}/auth/callback?next=${encodeURIComponent(
+              "/auth/password/update"
+            )}`
+          : undefined,
+      });
+      if (error) throw error;
 
       setEmailSent(true);
       toast({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -42,21 +42,21 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
+      const supabase = createSupabaseBrowser();
+      const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
-        redirect: false,
       });
 
-      if (result?.error) {
+      if (error) {
         toast({
           variant: "destructive",
           title: "Inicio de sesión fallido",
-          description: "Correo o contraseña inválidos. Inténtalo nuevamente.",
+          description: error.message || "Correo o contraseña inválidos.",
         });
       } else {
-        router.push(callbackUrl);
-        router.refresh();
+        const url = new URL(callbackUrl, window.location.origin).toString();
+        router.push(url);
       }
     } catch (error) {
       console.error("[v0] Login error:", error);

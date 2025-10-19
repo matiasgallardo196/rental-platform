@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,14 @@ import Link from "next/link";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BookingsPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [upcoming, setUpcoming] = useState<any[]>([]);
   const [past, setPast] = useState<any[]>([]);
 
   useEffect(() => {
     const load = async () => {
       if (!session?.user) return;
-      const userId = (session.user as any).id;
+      const userId = session.user.id;
       try {
         const res = await fetch(
           `${API_URL}/bookings?userId=${encodeURIComponent(userId)}`,

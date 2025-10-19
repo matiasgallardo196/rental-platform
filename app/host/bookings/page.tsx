@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -26,7 +26,7 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function HostBookingsPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [upcoming, setUpcoming] = useState<any[]>([]);
   const [past, setPast] = useState<any[]>([]);
   const [properties, setProperties] = useState<{ id: string; title: string }[]>(
@@ -40,8 +40,8 @@ export default function HostBookingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      if (!session?.user || (session.user as any).role !== "host") return;
-      const hostId = (session.user as any).id;
+      if (!session?.user || session.user.user_metadata?.role !== "host") return;
+      const hostId = session.user.id;
       const res = await fetch(`${API_URL}/hosts/${hostId}/bookings`, {
         cache: "no-store",
       });
@@ -66,7 +66,7 @@ export default function HostBookingsPage() {
     load();
   }, [session]);
 
-  if (!session?.user || (session.user as any).role !== "host") {
+  if (!session?.user || session.user.user_metadata?.role !== "host") {
     return (
       <div className="container mx-auto p-8">
         <p className="text-muted-foreground">Not authorized</p>

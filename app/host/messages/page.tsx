@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Breadcrumb,
@@ -31,7 +31,7 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function HostMessagesPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [conversations, setConversations] = useState<any[]>([]);
   const [propertyOptions, setPropertyOptions] = useState<
     { id: string; title: string }[]
@@ -45,8 +45,8 @@ export default function HostMessagesPage() {
 
   useEffect(() => {
     const load = async () => {
-      if (!session?.user || (session.user as any).role !== "host") return;
-      const hostId = (session.user as any).id;
+      if (!session?.user || session.user.user_metadata?.role !== "host") return;
+      const hostId = session.user.id;
       const res = await fetch(`${API_URL}/hosts/${hostId}/messages`, {
         cache: "no-store",
       });
@@ -77,11 +77,11 @@ export default function HostMessagesPage() {
     const loadThread = async () => {
       if (
         !session?.user ||
-        (session.user as any).role !== "host" ||
+        session.user.user_metadata?.role !== "host" ||
         !activeBookingId
       )
         return;
-      const hostId = (session.user as any).id;
+      const hostId = session.user.id;
       await fetch(
         `${API_URL}/hosts/${hostId}/messages/${activeBookingId}/read`,
         { method: "PATCH" }
@@ -103,7 +103,7 @@ export default function HostMessagesPage() {
     if (activeBookingId) {
       typingTimer = setTimeout(() => setTyping(true), 800);
       refreshTimer = setInterval(async () => {
-        const hostId = (session?.user as any)?.id;
+        const hostId = session?.user?.id;
         if (!hostId) return;
         const res = await fetch(
           `${API_URL}/hosts/${hostId}/messages/${activeBookingId}`,
@@ -137,7 +137,7 @@ export default function HostMessagesPage() {
     }
   }, [threadMessages]);
 
-  if (!session?.user || (session.user as any).role !== "host") {
+  if (!session?.user || session.user.user_metadata?.role !== "host") {
     return (
       <div className="container mx-auto p-8">
         <p className="text-muted-foreground">Not authorized</p>
@@ -203,7 +203,7 @@ export default function HostMessagesPage() {
               .filter(([, v]) => v)
               .map(([k]) => k);
             if (bookingIds.length === 0) return;
-            const hostId = (session!.user as any).id;
+            const hostId = session!.user!.id;
             await fetch(`${API_URL}/hosts/${hostId}/messages/read`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -228,7 +228,7 @@ export default function HostMessagesPage() {
               .filter(([, v]) => v)
               .map(([k]) => k);
             if (bookingIds.length === 0) return;
-            const hostId = (session!.user as any).id;
+            const hostId = session!.user!.id;
             await fetch(`${API_URL}/hosts/${hostId}/messages/unread`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -353,7 +353,7 @@ export default function HostMessagesPage() {
                 <div className="text-xs text-muted-foreground">{m.at}</div>
                 <div
                   className={
-                    m.fromUserId === (session!.user as any).id
+                    m.fromUserId === session!.user!.id
                       ? "ml-auto max-w-[80%] rounded-lg bg-primary px-3 py-2 text-primary-foreground"
                       : "mr-auto max-w-[80%] rounded-lg bg-muted px-3 py-2"
                   }

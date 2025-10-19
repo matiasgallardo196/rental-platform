@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  const response = NextResponse.next();
+  const supabase = createMiddlewareClient({ req: request, res: response });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   const isAuthPage =
     request.nextUrl.pathname.startsWith("/login") ||
@@ -21,12 +22,12 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/admin");
 
   // Redirect authenticated users away from auth pages
-  if (isAuthPage && token) {
+  if (isAuthPage && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Redirect unauthenticated users to login
-  if (isProtectedPage && !token) {
+  if (isProtectedPage && !session) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
@@ -34,19 +35,21 @@ export async function middleware(request: NextRequest) {
 
   // Only hosts can access /host routes
   if (request.nextUrl.pathname.startsWith("/host")) {
-    if (!token || (token as any).role !== "host") {
+    const role = session?.user?.user_metadata?.role;
+    if (!session || role !== "host") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
   // Only admins can access /admin routes
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (!token || (token as any).role !== "admin") {
+    const role = session?.user?.user_metadata?.role;
+    if (!session || role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

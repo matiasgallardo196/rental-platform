@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -24,13 +24,20 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "./theme-toggle";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  const session = useSession();
+  const supabase = useSupabaseClient();
   const [hostUnread, setHostUnread] = useState<number>(0);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -43,13 +50,20 @@ export function Navbar() {
     { href: "/messages", label: "Mensajes", icon: MessageSquare },
   ];
 
-  const visibleNavLinks = navLinks.filter((link) => {
-    const requiresGuest =
-      link.href === "/bookings" || link.href === "/messages";
-    if (requiresGuest)
-      return !!session?.user && (session.user as any)?.role === "guest";
-    return true;
-  });
+  const role = session?.user?.user_metadata?.role as string | undefined;
+
+  const visibleNavLinks = useMemo(() => {
+    if (!mounted)
+      return navLinks.filter(
+        (l) => l.href === "/listings" || l.href === "/map"
+      );
+    return navLinks.filter((link) => {
+      const requiresGuest =
+        link.href === "/bookings" || link.href === "/messages";
+      if (requiresGuest) return role === "guest";
+      return true;
+    });
+  }, [mounted, role]);
 
   const hostLinks = [
     { href: "/host/overview", label: "Resumen", icon: Settings },
@@ -70,15 +84,16 @@ export function Navbar() {
   useEffect(() => {
     const loadUnread = async () => {
       if (
+        !mounted ||
         !session?.user ||
-        (session.user as any)?.role !== "host" ||
+        session.user.user_metadata?.role !== "host" ||
         !API_URL
       ) {
         setHostUnread(0);
         return;
       }
       try {
-        const hostId = (session.user as any).id;
+        const hostId = session.user.id;
         const res = await fetch(`${API_URL}/hosts/${hostId}/messages`, {
           cache: "no-store",
         });
@@ -95,7 +110,34 @@ export function Navbar() {
       }
     };
     loadUnread();
-  }, [session, API_URL]);
+  }, [session, API_URL, mounted]);
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      const meta = (session?.user?.user_metadata as any) || {};
+      const metaAvatar =
+        (meta.avatar_url as string) || (meta.picture as string);
+      if (metaAvatar) {
+        setAvatarUrl(metaAvatar);
+        return;
+      }
+      if (!session?.user) {
+        setAvatarUrl(undefined);
+        return;
+      }
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("avatar_url")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        setAvatarUrl((data as any)?.avatar_url || undefined);
+      } catch {
+        setAvatarUrl(undefined);
+      }
+    };
+    loadAvatar();
+  }, [session, supabase]);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -116,7 +158,8 @@ export function Navbar() {
                 <Link href={link.href}>{link.label}</Link>
               </Button>
             ))}
-            {(session?.user as any)?.role === "host" &&
+            {mounted &&
+              role === "host" &&
               hostLinks.map((link) => (
                 <Button
                   key={link.href}
@@ -134,7 +177,8 @@ export function Navbar() {
                   </Link>
                 </Button>
               ))}
-            {(session?.user as any)?.role === "admin" &&
+            {mounted &&
+              role === "admin" &&
               adminLinks.map((link) => (
                 <Button
                   key={link.href}
@@ -149,7 +193,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {session?.user && (session.user as any)?.role === "host" ? (
+          {mounted && session?.user && role === "host" ? (
             <Button
               variant="ghost"
               size="sm"
@@ -171,14 +215,12 @@ export function Navbar() {
 
           <ThemeToggle />
 
-          {session?.user ? (
+          {mounted && session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={(session.user as any)?.image || "/placeholder.svg"}
-                    />
+                    <AvatarImage src={avatarUrl || "/placeholder.svg"} />
                     <AvatarFallback>
                       <User className="h-4 w-4" />
                     </AvatarFallback>
@@ -192,7 +234,7 @@ export function Navbar() {
                     Perfil
                   </Link>
                 </DropdownMenuItem>
-                {(session.user as any)?.role === "guest" && (
+                {session.user.user_metadata?.role === "guest" && (
                   <DropdownMenuItem asChild>
                     <Link href="/bookings">
                       <Calendar className="mr-2 h-4 w-4" />
@@ -201,7 +243,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                {(session.user as any)?.role === "host" &&
+                {session.user.user_metadata?.role === "host" &&
                   hostLinks.map((link) => (
                     <DropdownMenuItem key={link.href} asChild>
                       <Link href={link.href}>
@@ -216,7 +258,7 @@ export function Navbar() {
                     </DropdownMenuItem>
                   ))}
                 <DropdownMenuSeparator />
-                {(session.user as any)?.role === "admin" &&
+                {session.user.user_metadata?.role === "admin" &&
                   adminLinks.map((link) => (
                     <DropdownMenuItem key={link.href} asChild>
                       <Link href={link.href}>
@@ -225,7 +267,12 @@ export function Navbar() {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = "/";
+                  }}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Cerrar sesión
                 </DropdownMenuItem>
@@ -265,7 +312,7 @@ export function Navbar() {
                   </Button>
                 ))}
 
-                {(session?.user as any)?.role === "host" && (
+                {session?.user?.user_metadata?.role === "host" && (
                   <>
                     {hostLinks.map((link) => (
                       <Button
@@ -284,7 +331,7 @@ export function Navbar() {
                   </>
                 )}
 
-                {(session?.user as any)?.role === "admin" && (
+                {session?.user?.user_metadata?.role === "admin" && (
                   <>
                     {adminLinks.map((link) => (
                       <Button

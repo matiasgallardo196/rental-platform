@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,16 +16,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function HostMessageThreadPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const params = useParams();
   const bookingId = String(params?.bookingId || "");
   const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
     const load = async () => {
-      if (!session?.user || (session.user as any).role !== "host" || !bookingId)
+      if (
+        !session?.user ||
+        session.user.user_metadata?.role !== "host" ||
+        !bookingId
+      )
         return;
-      const hostId = (session.user as any).id;
+      const hostId = session.user.id;
       const res = await fetch(
         `${API_URL}/hosts/${hostId}/messages/${bookingId}`,
         { cache: "no-store" }
@@ -38,7 +42,7 @@ export default function HostMessageThreadPage() {
     load();
   }, [session, bookingId]);
 
-  if (!session?.user || (session.user as any).role !== "host") {
+  if (!session?.user || session.user.user_metadata?.role !== "host") {
     return (
       <div className="container mx-auto p-8">
         <p className="text-muted-foreground">Not authorized</p>
@@ -89,4 +93,3 @@ export default function HostMessageThreadPage() {
     </div>
   );
 }
-

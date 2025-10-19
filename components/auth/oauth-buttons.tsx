@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { Chrome, Apple } from "lucide-react";
 
@@ -13,7 +13,19 @@ export function OAuthButtons({
 }: OAuthButtonsProps) {
   const handleOAuthSignIn = async (provider: "google" | "apple") => {
     try {
-      await signIn(provider, { callbackUrl });
+      const supabase = createSupabaseBrowser();
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo:
+            typeof window !== "undefined"
+              ? `${
+                  window.location.origin
+                }/auth/callback?next=${encodeURIComponent(callbackUrl)}`
+              : undefined,
+        },
+      });
+      if (error) throw error;
     } catch (error) {
       console.error("[v0] OAuth sign in error:", error);
     }

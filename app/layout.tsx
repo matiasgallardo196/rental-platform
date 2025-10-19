@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Providers session={null}>
+          <Providers>
             <Suspense fallback={null}>
               <Navbar />
               {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChatWindow } from "@/components/messaging/chat-window";
@@ -9,13 +9,13 @@ import { MessageSquare } from "lucide-react";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function MessagesPage() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [conversation, setConversation] = useState<any | null>(null);
 
   useEffect(() => {
     const load = async () => {
       if (!session?.user) return;
-      const userId = (session.user as any).id;
+      const userId = session.user.id;
       const res = await fetch(
         `${API_URL}/messages?userId=${encodeURIComponent(userId)}`,
         { cache: "no-store" }
