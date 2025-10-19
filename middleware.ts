@@ -33,6 +33,36 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Simple in-memory rate limit per IP for auth-sensitive routes
+  try {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0] ||
+      request.ip ||
+      "unknown";
+    const path = request.nextUrl.pathname;
+    const key = `rl:${ip}:${path}`;
+    const now = Date.now();
+    const windowMs = 60_000;
+    const limit = path.startsWith("/forgot-password") ? 5 : 20;
+    const bucket = ((globalThis as any).__RL__ =
+      (globalThis as any).__RL__ || new Map());
+    const entry = bucket.get(key) || { count: 0, reset: now + windowMs };
+    if (now > entry.reset) {
+      entry.count = 0;
+      entry.reset = now + windowMs;
+    }
+    if (entry.count >= limit) {
+      const res = NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429 }
+      );
+      res.headers.set("Retry-After", "60");
+      return res;
+    }
+    entry.count++;
+    bucket.set(key, entry);
+  } catch {}
+
   // Only hosts can access /host routes
   if (request.nextUrl.pathname.startsWith("/host")) {
     const role = session?.user?.user_metadata?.role;
