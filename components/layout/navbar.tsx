@@ -114,13 +114,6 @@ export function Navbar() {
 
   useEffect(() => {
     const loadAvatar = async () => {
-      const meta = (session?.user?.user_metadata as any) || {};
-      const metaAvatar =
-        (meta.avatar_url as string) || (meta.picture as string);
-      if (metaAvatar) {
-        setAvatarUrl(metaAvatar);
-        return;
-      }
       if (!session?.user) {
         setAvatarUrl(undefined);
         return;
@@ -131,13 +124,34 @@ export function Navbar() {
           .select("avatar_url")
           .eq("id", session.user.id)
           .maybeSingle();
-        setAvatarUrl((data as any)?.avatar_url || undefined);
+        const dbAvatar = (data as any)?.avatar_url as string | undefined;
+        if (dbAvatar) {
+          setAvatarUrl(dbAvatar);
+          return;
+        }
+        const meta = (session.user.user_metadata as any) || {};
+        const metaAvatar =
+          (meta.avatar_url as string) || (meta.picture as string);
+        setAvatarUrl(metaAvatar || undefined);
       } catch {
-        setAvatarUrl(undefined);
+        const meta = (session.user.user_metadata as any) || {};
+        const metaAvatar =
+          (meta.avatar_url as string) || (meta.picture as string);
+        setAvatarUrl(metaAvatar || undefined);
       }
     };
     loadAvatar();
-  }, [session, supabase]);
+    const onUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { url?: string };
+        if (detail?.url) setAvatarUrl(detail.url);
+      } catch {}
+    };
+    window.addEventListener("avatar-updated", onUpdated as EventListener);
+    return () => {
+      window.removeEventListener("avatar-updated", onUpdated as EventListener);
+    };
+  }, [session, supabase, pathname]);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -220,7 +234,10 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={avatarUrl || "/placeholder.svg"} />
+                    <AvatarImage
+                      src={avatarUrl || "/placeholder.svg"}
+                      referrerPolicy="no-referrer"
+                    />
                     <AvatarFallback>
                       <User className="h-4 w-4" />
                     </AvatarFallback>
