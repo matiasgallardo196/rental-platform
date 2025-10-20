@@ -46,7 +46,7 @@ npm run dev
 
 \`\`\`
 ├── app/
-│ ├── (auth)/ # Authentication pages (login, register, forgot-password)
+│ ├── (auth)/ # Authentication pages (login, register, forgot-password, check-email)
 │ ├── api/ # API routes
 │ ├── dashboard/ # Protected dashboard pages
 │ └── page.tsx # Home page
@@ -70,7 +70,7 @@ npm run dev
 - [x] Apple OAuth integration (pendiente configuración)
 - [x] Protected routes with middleware
 - [x] Login page
-- [x] Registration page
+- [x] Registration page (+ redirect a `/check-email` tras registro)
 - [x] Forgot password page
 - [x] Form validation with Zod
 - [x] Toast notifications
@@ -91,6 +91,19 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 NEXT_PUBLIC_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ```
+
+## Flujo de registro con Supabase
+
+1. El usuario completa `/register` (email + contraseña).
+2. Se ejecuta `supabase.auth.signUp` con `emailRedirectTo = /auth/callback`.
+3. Mostramos la página de confirmación `/check-email` para que el usuario revise su correo.
+4. Al confirmar el enlace, `app/auth/callback/route.ts` intercambia el código por sesión y crea/actualiza el `profile`.
+5. El middleware protege rutas y redirige según sesión/rol.
+
+Notas:
+
+- No existe endpoint propio `/auth/register`; el backend devuelve 410 para registrar/iniciar sesión ya que la autenticación se gestiona en Supabase.
+- Si la confirmación por email está desactivada en Supabase, el perfil se crea inmediatamente tras el `signUp`.
 
 ## Supabase: Configuración Dev/Prod
 

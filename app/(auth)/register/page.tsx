@@ -126,7 +126,7 @@ export default function RegisterPage() {
         description: "Revisa tu correo para confirmar la cuenta.",
       });
 
-      router.push("/login");
+      router.push("/check-email");
     } catch (error) {
       console.error("[v0] Registration error:", error);
       toast({
