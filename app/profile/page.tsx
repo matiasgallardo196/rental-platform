@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,6 +23,7 @@ import { profileSchema, type ProfileFormData } from "@/lib/validations/profile";
 export default function ProfilePage() {
   const router = useRouter();
   const session = useSession();
+  const supabase = useSupabaseClient();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,7 +38,7 @@ export default function ProfilePage() {
     defaultValues: {
       name: session?.user?.user_metadata?.name || "",
       email: session?.user?.email || "",
-      avatar: (session?.user as any)?.image || "",
+      avatar: "",
       bio: "",
       phone: "",
     },
@@ -45,6 +46,24 @@ export default function ProfilePage() {
 
   const avatar = watch("avatar");
   const name = watch("name");
+
+  // Cargar avatar desde profiles
+  useState(() => {
+    (async () => {
+      if (!session?.user) return;
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("avatar_url, name")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        const dbAvatar = (data as any)?.avatar_url as string | undefined;
+        const dbName = (data as any)?.name as string | undefined;
+        if (dbAvatar) setValue("avatar", dbAvatar);
+        if (dbName) setValue("name", dbName);
+      } catch {}
+    })();
+  });
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);

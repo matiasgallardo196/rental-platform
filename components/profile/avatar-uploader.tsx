@@ -7,6 +7,7 @@ import { Upload, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 interface AvatarUploaderProps {
   value?: string;
@@ -16,7 +17,10 @@ interface AvatarUploaderProps {
 
 export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const supabase = useSupabaseClient();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -45,12 +49,86 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
   };
 
   const uploadFile = async (file: File) => {
-    // TODO: Replace with actual upload to presigned URL
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      onChange(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    setError(null);
+    const MAX_BYTES = 5 * 1024 * 1024;
+    const allowed = new Set([
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+    ]);
+
+    if (!allowed.has(file.type)) {
+      setError("Formato no permitido. Usa JPG, PNG, WEBP o AVIF.");
+      return;
+    }
+    if (file.size > MAX_BYTES) {
+      setError("El archivo supera 5 MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error("No hay sesión válida. Inicia sesión.");
+
+      const apiBase = process.env.NEXT_PUBLIC_API_URL;
+      if (!apiBase) throw new Error("Falta NEXT_PUBLIC_API_URL.");
+
+      const presignRes = await fetch(`${apiBase}/uploads/avatar/presign`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ contentType: file.type, size: file.size }),
+      });
+      if (!presignRes.ok) {
+        const txt = await presignRes.text().catch(() => "");
+        throw new Error(txt || "No se pudo firmar la URL");
+      }
+      const { url, key } = (await presignRes.json()) as {
+        url: string;
+        key: string;
+        publicUrl: string;
+      };
+
+      const putRes = await fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!putRes.ok) throw new Error("Fallo al subir a R2");
+
+      const confirmRes = await fetch(`${apiBase}/profile/avatar/confirm`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ key }),
+      });
+      if (!confirmRes.ok) throw new Error("No se pudo confirmar el avatar");
+      const { publicUrl } = (await confirmRes.json()) as {
+        ok: boolean;
+        publicUrl: string;
+      };
+      const finalUrl = `${publicUrl}?t=${Date.now()}`;
+      onChange(finalUrl);
+      try {
+        window.dispatchEvent(
+          new CustomEvent("avatar-updated", { detail: { url: finalUrl } })
+        );
+      } catch {}
+    } catch (e) {
+      console.error(e);
+      setError(e instanceof Error ? e.message : "Error subiendo imagen");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleRemove = () => {
@@ -103,9 +181,10 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
           variant="outline"
           size="sm"
           onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
         >
           <Upload className="mr-2 h-4 w-4" />
-          Subir foto
+          {isUploading ? "Subiendo..." : "Subir foto"}
         </Button>
       </div>
 
@@ -117,9 +196,13 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
         onChange={handleFileSelect}
       />
 
-      <p className="text-xs text-muted-foreground">
-        Arrastra y suelta o haz clic para subir
-      </p>
+      {error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Arrastra y suelta o haz clic para subir
+        </p>
+      )}
     </div>
   );
 }
