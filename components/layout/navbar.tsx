@@ -25,6 +25,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "./theme-toggle";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -38,8 +39,6 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const isActive = (path: string) => pathname === path;
 

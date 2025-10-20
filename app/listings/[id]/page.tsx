@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 import { ImageGallery } from "@/components/property/image-gallery";
 import { AmenitiesList } from "@/components/property/amenities-list";
 import { BookingCard } from "@/components/booking/booking-card";

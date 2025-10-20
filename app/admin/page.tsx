@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Calendar, TrendingUp, Users, Mail } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export default function AdminDashboard() {
   const session = useSession();

@@ -16,9 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, required } from "@/lib/env.loader";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+  required(
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  )
 );
 
 interface CheckoutFormProps {

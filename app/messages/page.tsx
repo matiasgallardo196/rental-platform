@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChatWindow } from "@/components/messaging/chat-window";
 import { MessageSquare } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export default function MessagesPage() {
   const session = useSession();

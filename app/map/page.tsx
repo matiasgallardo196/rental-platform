@@ -5,8 +5,7 @@ import { PropertyMap } from "@/components/map/property-map";
 import { PropertyCard } from "@/components/listings/property-card";
 import { Button } from "@/components/ui/button";
 import { List, Map } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export default function MapPage() {
   const [view, setView] = useState<"map" | "list">("map");

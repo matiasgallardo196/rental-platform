@@ -22,8 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export default function HostBookingsPage() {
   const session = useSession();

@@ -4,8 +4,7 @@ import { FiltersSheet } from "@/components/listings/filters-sheet";
 import { ListingsGrid } from "@/components/listings/listings-grid";
 import { Pagination } from "@/components/listings/pagination";
 import { searchParamsSchema } from "@/lib/validations/search";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 // Datos vendrán del backend mock
 

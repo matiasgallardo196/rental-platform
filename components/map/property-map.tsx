@@ -33,8 +33,8 @@ export function PropertyMap({
   );
 
   useEffect(() => {
-    // In a real app, initialize Mapbox GL JS here
-    // mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+    // Inicia Mapbox GL JS aquí si se integra
+    // mapboxgl.accessToken = NEXT_PUBLIC_MAPBOX_TOKEN
     // const map = new mapboxgl.Map({
     //   container: mapContainerRef.current,
     //   style: 'mapbox://styles/mapbox/streets-v12',

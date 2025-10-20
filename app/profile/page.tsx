@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AvatarUploader } from "@/components/profile/avatar-uploader";
 import { useToast } from "@/hooks/use-toast";
 import { profileSchema, type ProfileFormData } from "@/lib/validations/profile";
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -69,14 +70,11 @@ export default function ProfilePage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const res = await fetch(`${API_URL}/users/profile`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (!res.ok) {
         throw new Error("No se pudo actualizar el perfil");

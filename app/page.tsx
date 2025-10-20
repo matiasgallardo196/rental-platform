@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ListingsGrid } from "@/components/listings/listings-grid";
 import { HeroSearch } from "@/components/home/hero-search";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
 async function getFeatured() {
   const res = await fetch(`${API_URL}/properties?limit=12`, {

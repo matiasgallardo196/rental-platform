@@ -19,8 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// usar API_URL importado
 
 export default function HostBalancesPage() {
   const session = useSession();
