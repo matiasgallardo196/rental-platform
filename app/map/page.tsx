@@ -5,7 +5,7 @@ import { PropertyMap } from "@/components/map/property-map";
 import { PropertyCard } from "@/components/listings/property-card";
 import { Button } from "@/components/ui/button";
 import { List, Map } from "lucide-react";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 export default function MapPage() {
   const [view, setView] = useState<"map" | "list">("map");
@@ -14,11 +14,11 @@ export default function MapPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API_URL}/properties?limit=50`, {
-          cache: "no-store",
-        });
-        if (res.ok) {
-          const data = await res.json();
+        const data = await getJson<{ properties: any[] }>(
+          "/properties?limit=50",
+          { properties: [] }
+        );
+        if (Array.isArray(data.properties)) {
           // adapt to map needs
           const mapped = data.properties.map((p: any) => ({
             id: p.id,

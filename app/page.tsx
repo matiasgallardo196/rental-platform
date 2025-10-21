@@ -2,14 +2,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ListingsGrid } from "@/components/listings/listings-grid";
 import { HeroSearch } from "@/components/home/hero-search";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 async function getFeatured() {
-  const res = await fetch(`${API_URL}/properties?limit=12`, {
-    cache: "no-store",
+  return await getJson<{ properties: any[] }>("/properties?limit=12", {
+    properties: [],
   });
-  if (!res.ok) return { properties: [] };
-  return res.json();
 }
 
 export default async function HomePage() {

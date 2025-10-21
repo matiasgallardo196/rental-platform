@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { buildApiUrl, getJson } from "@/lib/api";
 
 export default function HostMessagesPage() {
   const session = useSession();
@@ -46,26 +46,19 @@ export default function HostMessagesPage() {
     const load = async () => {
       if (!session?.user || session.user.user_metadata?.role !== "host") return;
       const hostId = session.user.id;
-      const res = await fetch(`${API_URL}/hosts/${hostId}/messages`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setConversations(data.conversations || []);
-      }
+      const data = await getJson<{ conversations: any[] }>(
+        `/hosts/${hostId}/messages`,
+        { conversations: [] }
+      );
+      setConversations(data.conversations || []);
       // load properties for filter
-      const propsRes = await fetch(`${API_URL}/hosts/${hostId}/properties`, {
-        cache: "no-store",
-      });
-      if (propsRes.ok) {
-        const pdata = await propsRes.json();
-        setPropertyOptions(
-          (pdata.properties || []).map((p: any) => ({
-            id: p.id,
-            title: p.title,
-          }))
-        );
-      }
+      const pdata = await getJson<{ properties: any[] }>(
+        `/hosts/${hostId}/properties`,
+        { properties: [] }
+      );
+      setPropertyOptions(
+        (pdata.properties || []).map((p: any) => ({ id: p.id, title: p.title }))
+      );
     };
     load();
   }, [session]);
@@ -81,18 +74,15 @@ export default function HostMessagesPage() {
       )
         return;
       const hostId = session.user.id;
-      await fetch(
-        `${API_URL}/hosts/${hostId}/messages/${activeBookingId}/read`,
-        { method: "PATCH" }
+      const readUrl = buildApiUrl(
+        `/hosts/${hostId}/messages/${activeBookingId}/read`
       );
-      const res = await fetch(
-        `${API_URL}/hosts/${hostId}/messages/${activeBookingId}`,
-        { cache: "no-store" }
+      if (readUrl) await fetch(readUrl, { method: "PATCH" });
+      const data = await getJson<{ messages: any[] }>(
+        `/hosts/${hostId}/messages/${activeBookingId}`,
+        { messages: [] }
       );
-      if (res.ok) {
-        const data = await res.json();
-        setThreadMessages(data.messages || []);
-      }
+      setThreadMessages(data.messages || []);
     };
     loadThread();
 
@@ -104,14 +94,11 @@ export default function HostMessagesPage() {
       refreshTimer = setInterval(async () => {
         const hostId = session?.user?.id;
         if (!hostId) return;
-        const res = await fetch(
-          `${API_URL}/hosts/${hostId}/messages/${activeBookingId}`,
-          { cache: "no-store" }
+        const data = await getJson<{ messages: any[] }>(
+          `/hosts/${hostId}/messages/${activeBookingId}`,
+          { messages: [] }
         );
-        if (res.ok) {
-          const data = await res.json();
-          setThreadMessages(data.messages || []);
-        }
+        setThreadMessages(data.messages || []);
       }, 5000);
     }
     return () => {
@@ -203,7 +190,9 @@ export default function HostMessagesPage() {
               .map(([k]) => k);
             if (bookingIds.length === 0) return;
             const hostId = session!.user!.id;
-            await fetch(`${API_URL}/hosts/${hostId}/messages/read`, {
+            const url = buildApiUrl(`/hosts/${hostId}/messages/read`);
+            if (!url) return;
+            await fetch(url, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ bookingIds }),
@@ -228,7 +217,9 @@ export default function HostMessagesPage() {
               .map(([k]) => k);
             if (bookingIds.length === 0) return;
             const hostId = session!.user!.id;
-            await fetch(`${API_URL}/hosts/${hostId}/messages/unread`, {
+            const url2 = buildApiUrl(`/hosts/${hostId}/messages/unread`);
+            if (!url2) return;
+            await fetch(url2, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ bookingIds }),
@@ -379,14 +370,15 @@ export default function HostMessagesPage() {
                   last && last.fromUserId !== hostId
                     ? last.fromUserId
                     : last?.toUserId || "guest-1";
-                const res = await fetch(
-                  `${API_URL}/hosts/${hostId}/messages/${activeBookingId}`,
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: input, toUserId }),
-                  }
+                const postUrl = buildApiUrl(
+                  `/hosts/${hostId}/messages/${activeBookingId}`
                 );
+                if (!postUrl) return;
+                const res = await fetch(postUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ text: input, toUserId }),
+                });
                 if (res.ok) {
                   setInput("");
                   const data = await res.json();

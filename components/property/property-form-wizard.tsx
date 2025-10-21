@@ -32,7 +32,7 @@ import {
   PROPERTY_TYPES,
 } from "@/lib/validations/property";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { NEXT_PUBLIC_API_URL } from "@/lib/env.loader";
+import { buildApiUrl } from "@/lib/api";
 
 const STEPS = [
   {
@@ -124,7 +124,9 @@ export function PropertyFormWizard() {
 
     try {
       // TODO: Replace with actual API call
-      const res = await fetch(`${NEXT_PUBLIC_API_URL}/properties`, {
+      const url = buildApiUrl("/properties");
+      if (!url) throw new Error("Falta NEXT_PUBLIC_API_URL.");
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

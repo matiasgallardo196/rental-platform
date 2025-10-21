@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChatWindow } from "@/components/messaging/chat-window";
 import { MessageSquare } from "lucide-react";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 export default function MessagesPage() {
   const session = useSession();
@@ -15,14 +15,11 @@ export default function MessagesPage() {
     const load = async () => {
       if (!session?.user) return;
       const userId = session.user.id;
-      const res = await fetch(
-        `${API_URL}/messages?userId=${encodeURIComponent(userId)}`,
-        { cache: "no-store" }
+      const data = await getJson<any | null>(
+        `/messages?userId=${encodeURIComponent(userId)}`,
+        null
       );
-      if (res.ok) {
-        const data = await res.json();
-        setConversation(data);
-      }
+      setConversation(data);
     };
     load();
   }, [session]);

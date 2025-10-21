@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Providers } from "@/components/providers/session-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ApiStatusGate } from "@/components/layout/api-status-gate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,8 +28,10 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <Providers>
             <Suspense fallback={null}>
-              <Navbar />
-              {children}
+              <ApiStatusGate>
+                <Navbar />
+                {children}
+              </ApiStatusGate>
               <Toaster />
             </Suspense>
           </Providers>

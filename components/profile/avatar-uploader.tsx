@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { buildApiUrl } from "@/lib/api";
 
 interface AvatarUploaderProps {
   value?: string;
@@ -76,10 +76,10 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
       const token = session?.access_token;
       if (!token) throw new Error("No hay sesión válida. Inicia sesión.");
 
-      const apiBase = API_URL;
-      if (!apiBase) throw new Error("Falta NEXT_PUBLIC_API_URL.");
+      const presignUrl = buildApiUrl(`/uploads/avatar/presign`);
+      if (!presignUrl) throw new Error("Falta NEXT_PUBLIC_API_URL.");
 
-      const presignRes = await fetch(`${apiBase}/uploads/avatar/presign`, {
+      const presignRes = await fetch(presignUrl, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -104,7 +104,9 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
       });
       if (!putRes.ok) throw new Error("Fallo al subir a R2");
 
-      const confirmRes = await fetch(`${apiBase}/profile/avatar/confirm`, {
+      const confirmUrl = buildApiUrl(`/profile/avatar/confirm`);
+      if (!confirmUrl) throw new Error("Falta NEXT_PUBLIC_API_URL.");
+      const confirmRes = await fetch(confirmUrl, {
         method: "POST",
         headers: {
           "content-type": "application/json",

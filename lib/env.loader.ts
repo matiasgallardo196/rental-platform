@@ -18,6 +18,10 @@ export const NEXT_PUBLIC_MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as
   | string
   | undefined;
 
+// Contacto soporte (público)
+export const NEXT_PUBLIC_SUPPORT_EMAIL = process.env
+  .NEXT_PUBLIC_SUPPORT_EMAIL as string | undefined;
+
 // Helpers
 export function required(name: string, value: string | undefined): string {
   if (!value) {

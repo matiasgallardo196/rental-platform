@@ -4,7 +4,7 @@ import { FiltersSheet } from "@/components/listings/filters-sheet";
 import { ListingsGrid } from "@/components/listings/listings-grid";
 import { Pagination } from "@/components/listings/pagination";
 import { searchParamsSchema } from "@/lib/validations/search";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 // Datos vendrán del backend mock
 
@@ -17,11 +17,10 @@ async function getListings(searchParams: any) {
     if (v !== undefined && v !== null && v !== "") qs.append(k, String(v));
   });
 
-  const res = await fetch(`${API_URL}/properties?${qs.toString()}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("No se pudieron cargar las propiedades");
-  return res.json();
+  return await getJson<{ properties: any[]; pagination: any }>(
+    `/properties?${qs.toString()}`,
+    { properties: [], pagination: { totalResults: 0, page: 1, pageSize: 0 } }
+  );
 }
 
 export default async function ListingsPage({

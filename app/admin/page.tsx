@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Calendar, TrendingUp, Users, Mail } from "lucide-react";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 export default function AdminDashboard() {
   const session = useSession();
@@ -22,12 +22,8 @@ export default function AdminDashboard() {
     if (!session?.user) return;
     const load = async () => {
       const [o, m] = await Promise.all([
-        fetch(`${API_URL}/admin/overview`, { cache: "no-store" }).then((r) =>
-          r.json()
-        ),
-        fetch(`${API_URL}/admin/messages`, { cache: "no-store" }).then((r) =>
-          r.json()
-        ),
+        getJson<any>(`/admin/overview`, {}),
+        getJson<{ messages: any[] }>(`/admin/messages`, { messages: [] }),
       ]);
       setOverview(o);
       setMsgs(m.messages || []);

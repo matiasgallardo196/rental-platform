@@ -4,6 +4,7 @@ import { useSession } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getJson } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, MessageSquare, Star } from "lucide-react";
@@ -21,15 +22,12 @@ export default function BookingsPage() {
       if (!session?.user) return;
       const userId = session.user.id;
       try {
-        const res = await fetch(
-          `${API_URL}/bookings?userId=${encodeURIComponent(userId)}`,
-          { cache: "no-store" }
+        const data = await getJson<{ upcoming: any[]; past: any[] }>(
+          `/bookings?userId=${encodeURIComponent(userId)}`,
+          { upcoming: [], past: [] }
         );
-        if (res.ok) {
-          const data = await res.json();
-          setUpcoming(data.upcoming || []);
-          setPast(data.past || []);
-        }
+        setUpcoming(data.upcoming || []);
+        setPast(data.past || []);
       } catch (e) {
         console.error(e);
       }

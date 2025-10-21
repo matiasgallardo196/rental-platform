@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 import { ImageGallery } from "@/components/property/image-gallery";
 import { AmenitiesList } from "@/components/property/amenities-list";
 import { BookingCard } from "@/components/booking/booking-card";
@@ -9,10 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { MapPin, Users, Bed, Bath } from "lucide-react";
 
 async function getProperty(id: string) {
-  const res = await fetch(`${API_URL}/properties/${id}`, { cache: "no-store" });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Failed to load property");
-  return res.json();
+  return await getJson<any | null>(`/properties/${id}`, null);
 }
 
 export default async function PropertyDetailPage({

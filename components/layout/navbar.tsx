@@ -25,7 +25,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "./theme-toggle";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { buildApiUrl } from "@/lib/api";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -85,17 +85,16 @@ export function Navbar() {
       if (
         !mounted ||
         !session?.user ||
-        session.user.user_metadata?.role !== "host" ||
-        !API_URL
+        session.user.user_metadata?.role !== "host"
       ) {
         setHostUnread(0);
         return;
       }
       try {
         const hostId = session.user.id;
-        const res = await fetch(`${API_URL}/hosts/${hostId}/messages`, {
-          cache: "no-store",
-        });
+        const url = buildApiUrl(`/hosts/${hostId}/messages`);
+        if (!url) return;
+        const res = await fetch(url, { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           const total = (data.conversations || []).reduce(
@@ -109,7 +108,7 @@ export function Navbar() {
       }
     };
     loadUnread();
-  }, [session, API_URL, mounted]);
+  }, [session, mounted]);
 
   useEffect(() => {
     const loadAvatar = async () => {

@@ -15,6 +15,7 @@ import {
 import { DataTable } from "@/components/admin/data-table";
 import { Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { getJson } from "@/lib/api";
 import {
   Select,
   SelectContent,
@@ -41,26 +42,22 @@ export default function HostBookingsPage() {
     const load = async () => {
       if (!session?.user || session.user.user_metadata?.role !== "host") return;
       const hostId = session.user.id;
-      const res = await fetch(`${API_URL}/hosts/${hostId}/bookings`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUpcoming(data.upcoming || []);
-        setPast(data.past || []);
-      }
+      const data = await getJson<{ upcoming: any[]; past: any[] }>(
+        `/hosts/${hostId}/bookings`,
+        { upcoming: [], past: [] }
+      );
+      setUpcoming(data.upcoming || []);
+      setPast(data.past || []);
       // Load properties for filter
-      const propsRes = await fetch(`${API_URL}/hosts/${hostId}/properties`, {
-        cache: "no-store",
-      });
-      if (propsRes.ok) {
-        const pdata = await propsRes.json();
-        const opts = (pdata.properties || []).map((p: any) => ({
-          id: p.id,
-          title: p.title,
-        }));
-        setProperties(opts);
-      }
+      const pdata = await getJson<{ properties: any[] }>(
+        `/hosts/${hostId}/properties`,
+        { properties: [] }
+      );
+      const opts = (pdata.properties || []).map((p: any) => ({
+        id: p.id,
+        title: p.title,
+      }));
+      setProperties(opts);
     };
     load();
   }, [session]);

@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { buildApiUrl, getJson } from "@/lib/api";
 
 export default function HostMessageThreadPage() {
   const session = useSession();
@@ -29,14 +29,11 @@ export default function HostMessageThreadPage() {
       )
         return;
       const hostId = session.user.id;
-      const res = await fetch(
-        `${API_URL}/hosts/${hostId}/messages/${bookingId}`,
-        { cache: "no-store" }
+      const data = await getJson<{ messages: any[] }>(
+        `/hosts/${hostId}/messages/${bookingId}`,
+        { messages: [] }
       );
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data.messages || []);
-      }
+      setMessages(data.messages || []);
     };
     load();
   }, [session, bookingId]);

@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 export default function HostOverviewPage() {
   const session = useSession();
@@ -22,13 +22,11 @@ export default function HostOverviewPage() {
     const load = async () => {
       if (!session?.user || session.user.user_metadata?.role !== "host") return;
       const hostId = session.user.id;
-      const res = await fetch(`${API_URL}/hosts/${hostId}/overview`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setSummary(data.summary || null);
-      }
+      const data = await getJson<{ summary: any }>(
+        `/hosts/${hostId}/overview`,
+        { summary: null }
+      );
+      setSummary(data.summary || null);
     };
     load();
   }, [session]);

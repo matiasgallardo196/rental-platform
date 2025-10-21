@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getJson } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { Button } from "@/components/ui/button";
@@ -15,13 +16,11 @@ export default function HostListingsPage() {
     const load = async () => {
       if (!session?.user || session.user.user_metadata?.role !== "host") return;
       const hostId = session.user.id;
-      const res = await fetch(`${API_URL}/hosts/${hostId}/properties`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setItems(data.properties || []);
-      }
+      const data = await getJson<{ properties: any[] }>(
+        `/hosts/${hostId}/properties`,
+        { properties: [] }
+      );
+      setItems(data.properties || []);
     };
     load();
   }, [session]);

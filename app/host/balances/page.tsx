@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { NEXT_PUBLIC_API_URL as API_URL } from "@/lib/env.loader";
+import { getJson } from "@/lib/api";
 
 // usar API_URL importado
 
@@ -31,10 +31,8 @@ export default function HostBalancesPage() {
     const load = async () => {
       if (!session?.user || session.user.user_metadata?.role !== "host") return;
       const hostId = session.user.id;
-      const res = await fetch(`${API_URL}/hosts/${hostId}/balances`, {
-        cache: "no-store",
-      });
-      if (res.ok) setBalance(await res.json());
+      const data = await getJson<any>(`/hosts/${hostId}/balances`, null);
+      setBalance(data);
     };
     load();
   }, [session]);
