@@ -20,7 +20,7 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Encuentra lugares únicos para quedarte en todo el mundo
+              Mismas propiedades mejores precios
             </h1>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg">
               Explora estancias memorables para cualquier ocasión.
