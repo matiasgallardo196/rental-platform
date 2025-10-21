@@ -174,17 +174,6 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
             {getInitials(name)}
           </AvatarFallback>
         </Avatar>
-        {value && (
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute -right-2 -top-2 h-8 w-8 rounded-full"
-            onClick={handleRemove}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
       <div className="flex gap-2">

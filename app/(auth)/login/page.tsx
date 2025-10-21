@@ -55,6 +55,43 @@ export default function LoginPage() {
           description: error.message || "Correo o contraseña inválidos.",
         });
       } else {
+        // Post-login: asegurar que el perfil exista
+        try {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user) {
+            const { data: existing } = await supabase
+              .from("profiles")
+              .select("id")
+              .eq("id", user.id)
+              .maybeSingle();
+            if (!existing) {
+              const baseName = (
+                user.user_metadata?.name ||
+                user.user_metadata?.full_name ||
+                ""
+              ).trim();
+              const nameFromEmail = user.email?.split("@")[0] || null;
+              const effectiveName = baseName || nameFromEmail || null;
+              const avatar =
+                user.user_metadata?.avatar_url ||
+                user.user_metadata?.picture ||
+                (effectiveName
+                  ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                      effectiveName
+                    )}`
+                  : null);
+              await supabase.from("profiles").insert({
+                id: user.id,
+                role: "guest",
+                name: effectiveName,
+                avatar_url: avatar,
+              });
+            }
+          }
+        } catch {}
+
         const url = new URL(callbackUrl, window.location.origin).toString();
         router.push(url);
       }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   NEXT_PUBLIC_API_URL as API_URL,
   NEXT_PUBLIC_SUPPORT_EMAIL,
@@ -9,8 +10,9 @@ import { buildApiUrl } from "@/lib/api";
 // Ilustración inline para un tono más amigable (sin dependencias adicionales)
 
 export function ApiStatusGate({ children }: { children: React.ReactNode }) {
-  const [status, setStatus] = useState<"ok" | "missing" | "down">(
-    API_URL ? "down" : "missing"
+  const router = useRouter();
+  const [status, setStatus] = useState<"checking" | "ok" | "missing" | "down">(
+    API_URL ? "checking" : "missing"
   );
   const [progress, setProgress] = useState(0);
   const [probing, setProbing] = useState(false);
@@ -40,15 +42,36 @@ export function ApiStatusGate({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Probe inmediato al montar para no bloquear si el API está OK
   useEffect(() => {
-    // iniciar ciclo visual
-    startRef.current = Date.now();
-    setProgress(0);
+    if (!API_URL) {
+      setStatus("missing");
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const ok = await probeOnce();
+      if (cancelled) return;
+      if (ok) {
+        setStatus("ok");
+        // Forzar revalidación de la ruta para recargar datos del backend
+        try {
+          router.refresh();
+        } catch {}
+      } else {
+        setStatus("down");
+        startRef.current = Date.now();
+        setProgress(0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Progreso hacia el próximo intento y reintento automático al llegar al 100%
   useEffect(() => {
-    if (status === "ok") return;
+    if (!(status === "down" || status === "missing")) return;
     const tick = setInterval(() => {
       const elapsed = Date.now() - startRef.current;
       const pct = Math.max(0, Math.min(100, (elapsed / RETRY_MS) * 100));
@@ -60,6 +83,9 @@ export function ApiStatusGate({ children }: { children: React.ReactNode }) {
           const ok = await probeOnce();
           if (ok) {
             setStatus("ok");
+            try {
+              router.refresh();
+            } catch {}
             return;
           }
           // fallo: feedback y reinicio del ciclo
@@ -83,7 +109,7 @@ export function ApiStatusGate({ children }: { children: React.ReactNode }) {
     }
   }, [status]);
 
-  if (status === "ok") return <>{children}</>;
+  if (status === "ok" || status === "checking") return <>{children}</>;
 
   const email = NEXT_PUBLIC_SUPPORT_EMAIL || "soporte@example.com";
   const title =
