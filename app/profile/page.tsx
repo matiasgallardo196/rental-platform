@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useForm } from "react-hook-form";
@@ -48,8 +48,9 @@ export default function ProfilePage() {
   const avatar = watch("avatar");
   const name = watch("name");
 
-  // Cargar avatar desde profiles
-  useState(() => {
+  // Cargar avatar desde profiles (hidrata al entrar/refrescar)
+  useEffect(() => {
+    let cancelled = false;
     (async () => {
       if (!session?.user) return;
       try {
@@ -58,13 +59,17 @@ export default function ProfilePage() {
           .select("avatar_url, name")
           .eq("id", session.user.id)
           .maybeSingle();
+        if (cancelled) return;
         const dbAvatar = (data as any)?.avatar_url as string | undefined;
         const dbName = (data as any)?.name as string | undefined;
         if (dbAvatar) setValue("avatar", dbAvatar);
         if (dbName) setValue("name", dbName);
       } catch {}
     })();
-  });
+    return () => {
+      cancelled = true;
+    };
+  }, [session, supabase, setValue]);
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);

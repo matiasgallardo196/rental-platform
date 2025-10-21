@@ -1,6 +1,6 @@
-# Rental Platform - Frontend
+# AlojaPy - Frontend
 
-Modern property rental platform built with Next.js 14, TypeScript, and Tailwind CSS.
+Plataforma de alquileres construida con Next.js 14, TypeScript y Tailwind CSS.
 
 ## Tech Stack
 

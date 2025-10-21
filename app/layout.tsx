@@ -12,9 +12,14 @@ import { ApiStatusGate } from "@/components/layout/api-status-gate";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rental Platform",
+  title: "AlojaPy",
   description: "Find your perfect rental property",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/placeholder-logo.png",
+  },
 };
 
 export default function RootLayout({

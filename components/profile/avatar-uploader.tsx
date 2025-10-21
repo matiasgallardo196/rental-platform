@@ -160,7 +160,16 @@ export function AvatarUploader({ value, onChange, name }: AvatarUploaderProps) {
         onDrop={handleDrop}
       >
         <Avatar className="h-32 w-32">
-          <AvatarImage src={value || "/placeholder.svg"} alt={name} />
+          <AvatarImage
+            src={value || "/placeholder.svg"}
+            alt={name}
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              const img = e.currentTarget as HTMLImageElement;
+              if (img.src.endsWith("/placeholder.svg")) return;
+              img.src = "/placeholder.svg";
+            }}
+          />
           <AvatarFallback className="text-2xl">
             {getInitials(name)}
           </AvatarFallback>
