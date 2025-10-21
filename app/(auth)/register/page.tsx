@@ -71,7 +71,7 @@ export default function RegisterPage() {
       )}`;
       const origin =
         typeof window !== "undefined" ? window.location.origin : "";
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -90,6 +90,28 @@ export default function RegisterPage() {
         },
       });
       if (error) throw error;
+
+      // Si el email ya estaba registrado, Supabase puede devolver 200 con identities vacías
+      // https://github.com/supabase/gotrue-js/issues/ (
+      // Heurística: identities.length === 0 => usuario existente
+      const identities = (signUpData?.user as any)?.identities as
+        | any[]
+        | undefined;
+      if (Array.isArray(identities) && identities.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "Cuenta existente",
+          description:
+            "Ya existe una cuenta con ese correo. Inicia sesión o recupera tu contraseña.",
+        });
+        router.push(
+          new URL(
+            "/login?callbackUrl=/dashboard",
+            window.location.origin
+          ).toString()
+        );
+        return;
+      }
 
       // Si la sesión queda abierta tras el sign up (confirmación desactivada),
       // crea el perfil inmediatamente con RLS.
